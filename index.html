@@ -232,6 +232,18 @@ window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`,'_blank
 
 
 <script>
+  function validateDateTime() {
+    const date = document.getElementById("dayInput").value;
+    const time = document.getElementById("timeInput").value;
+
+    if (date === "" || time === "") {
+        alert("💖 Please select both a date and a time before continuing!");
+        return;
+    }
+
+    saveTime();
+    goTo(4);
+}
 let selectedDate='';
 let selectedTime='';
 let selectedFood='';
