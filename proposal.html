@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Date Proposal</title>
+<script src="https://cdn.tailwindcss.com">function sendWhatsApp(){
+const message=`Hey! 💕
+I accepted your date proposal ❤️
+
+📅 Date: ${selectedDate}
+⏰ Time: ${selectedTime}
+🍕 Food: ${selectedFood}`;
+const phone='923001234567';
+window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`,'_blank');
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --plum:#4a2f42;
+    --pink:#f2a3bd;
+    --pink-deep:#ec87a8;
+    --lavender:#d9cdf5;
+    --lavender-deep:#c7b6ef;
+    --cream:#fdf3ee;
+  }
+  *{ box-sizing:border-box; }
+  body{
+    font-family:'Quicksand', sans-serif;
+    background: radial-gradient(circle at 20% 20%, #fdf0e8 0%, #fbeaf0 45%, #f7e4ee 100%);
+    color:var(--plum);
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  .font-display{ font-family:'Fredoka', sans-serif; }
+
+  .card{
+    background:#fffdfc;
+    border-radius:2rem;
+    box-shadow: 0 20px 60px -15px rgba(74,47,66,0.18), 0 2px 8px rgba(74,47,66,0.06);
+  }
+
+  .screen{
+    display:none;
+    animation: fadeIn .5s ease forwards;
+  }
+  .screen.active{ display:block; }
+
+  @keyframes fadeIn{
+    from{ opacity:0; transform:translateY(14px) scale(.98); }
+    to{ opacity:1; transform:translateY(0) scale(1); }
+  }
+
+  .flower{
+    position:fixed;
+    font-size:1.4rem;
+    pointer-events:none;
+    opacity:.85;
+    animation: floatDown linear infinite;
+    z-index:0;
+    user-select:none;
+  }
+  @keyframes floatDown{
+    0%{ transform: translateY(-10vh) translateX(0) rotate(0deg); }
+    100%{ transform: translateY(110vh) translateX(20px) rotate(200deg); }
+  }
+
+  .no-btn{ transition: transform .15s ease; position:relative; }
+
+  .btn-pink{
+    background: linear-gradient(180deg, var(--pink), var(--pink-deep));
+    color:#3d2436;
+    box-shadow: 0 8px 20px -6px rgba(236,135,168,0.6);
+  }
+  .btn-pink:hover{ filter:brightness(1.03); transform:translateY(-1px); }
+  .btn-pink:active{ transform:translateY(0px) scale(.98); }
+
+  .btn-lavender{
+    background: linear-gradient(180deg, var(--lavender), var(--lavender-deep));
+    color:#3d2436;
+  }
+
+  .food-card{
+    transition: all .18s ease;
+    cursor:pointer;
+  }
+  .food-card:hover{ transform: translateY(-2px); }
+  .food-card.selected{
+    border-color: var(--pink-deep) !important;
+    background: #fdeef3;
+    box-shadow: 0 6px 16px -6px rgba(236,135,168,0.5);
+  }
+
+  .confetti-piece{
+    position:fixed;
+    top:-5vh;
+    width:10px; height:10px;
+    z-index:50;
+    pointer-events:none;
+    animation: confettiFall linear forwards;
+  }
+  @keyframes confettiFall{
+    to{ transform: translateY(105vh) rotate(540deg); opacity:0.9; }
+  }
+
+  input[type="date"], select, .fake-select{
+    font-family:'Quicksand',sans-serif;
+  }
+
+  .pulse-heart{
+    animation: pulseHeart 1.6s ease-in-out infinite;
+  }
+  @keyframes pulseHeart{
+    0%,100%{ transform:scale(1); }
+    50%{ transform:scale(1.15); }
+  }
+</style>
+</head>
+<body class="flex items-center justify-center min-h-screen px-4 py-10 relative">
+
+<!-- floating flowers background -->
+<div id="flowers" class="fixed inset-0 overflow-hidden z-0"></div>
+
+<!-- confetti container -->
+<div id="confetti" class="fixed inset-0 pointer-events-none z-40"></div>
+
+<div class="relative z-10 w-full max-w-xl">
+
+  <!-- SCREEN 1: The Proposal -->
+  <section id="screen-1" class="screen active card p-8 sm:p-10 text-center">
+    <img src="images/screen-1.gif"
+         alt="cute cat" class="w-40 h-40 sm:w-48 sm:h-48 object-cover rounded-3xl mx-auto mb-8 shadow-md" />
+    <h1 class="font-display font-semibold text-2xl sm:text-3xl leading-snug mb-8">
+      🌸 Will you go on a date with me? 🌸
+    </h1>
+    <div class="relative h-16 mt-2">
+  <button onclick="goTo(2); burstConfetti();" 
+          class="btn-pink font-display font-medium px-8 py-3 rounded-full text-lg absolute left-0 top-0">
+    YES 💕
+  </button>
+  <button id="noBtn" 
+          class="no-btn btn-lavender font-display font-medium px-8 py-3 rounded-full text-lg absolute right-0 top-0">
+    no... 🙈
+  </button>
+</div>
+  </section>
+
+  <!-- SCREEN 2: Reaction -->
+  <section id="screen-2" class="screen card p-8 sm:p-10 text-center">
+    <div class="w-40 h-28 sm:w-48 sm:h-32 mx-auto mb-8 rounded-3xl overflow-hidden shadow-md bg-red-400 flex items-center justify-center">
+      <img src="https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=400&h=400&fit=crop" alt="reaction" class="w-full h-full object-cover" />
+    </div>
+    <h1 class="font-display font-bold text-2xl sm:text-3xl mb-3">WAIT YOU ACTUALLY SAID YES?? 😭</h1>
+    <p class="text-base sm:text-lg mb-8 opacity-80">I was so ready for you to say no 🥹</p>
+    <button onclick="goTo(3)" class="btn-pink font-display font-medium px-8 py-3 rounded-full text-lg">
+      okay okay! →
+    </button>
+  </section>
+
+  <!-- SCREEN 3: Date & Time -->
+  <section id="screen-3" class="screen card p-8 sm:p-10 text-center">
+    <div class="text-4xl mb-6">🗓️🐾</div>
+    <h1 class="font-display font-semibold text-2xl sm:text-3xl mb-8">So… when are you free?</h1>
+
+    <div class="text-left mb-5">
+      <label class="font-display text-sm font-medium block mb-1">Pick a Day ✨</label>
+      <input id="dayInput" type="date" class="w-full border border-pink-200 focus:border-pink-400 outline-none rounded-xl px-4 py-3 text-base" />
+    </div>
+
+    <div class="text-left mb-8">
+      <label class="font-display text-sm font-medium block mb-1">What Time? ⏰</label>
+      <select id="timeInput" class="w-full border border-pink-200 focus:border-pink-400 outline-none rounded-xl px-4 py-3 text-base bg-white appearance-none">
+        <option value="" disabled selected>Select a time...</option>
+        <option>5:00 PM — we eating with the retirees</option>
+        <option>6:00 PM — this is the right answer tbh</option>
+        <option>7:00 PM — you're making me hungry already</option>
+        <option>8:00 PM — we eating dinner or breakfast?</option>
+      </select>
+    </div>
+
+   <button onclick="saveTime(); goTo(4)" class="btn-pink font-display font-medium w-full py-3 rounded-full text-lg">
+  set the date! 🤍
+</button>
+  </section>
+
+  <!-- SCREEN 4: Food -->
+  <section id="screen-4" class="screen card p-8 sm:p-10 text-center">
+    <h1 class="font-display font-semibold text-2xl sm:text-3xl mb-8">What are we feeling? 🍜✨</h1>
+    <div id="foodGrid" class="grid grid-cols-3 gap-3 mb-6">
+      <div class="food-card border-2 border-transparent bg-purple-50 rounded-2xl py-5" data-food="Pizza">
+        <div class="text-3xl mb-1">🍕</div><div class="font-display font-medium text-sm">Pizza</div>
+      </div>
+      <div class="food-card border-2 border-transparent bg-purple-50 rounded-2xl py-5" data-food="Sushi">
+        <div class="text-3xl mb-1">🍣</div><div class="font-display font-medium text-sm">Sushi</div>
+      </div>
+      <div class="food-card border-2 border-transparent bg-purple-50 rounded-2xl py-5" data-food="Burgers">
+        <div class="text-3xl mb-1">🍔</div><div class="font-display font-medium text-sm">Burgers</div>
+      </div>
+      <div class="food-card border-2 border-transparent bg-purple-50 rounded-2xl py-5" data-food="Pasta">
+        <div class="text-3xl mb-1">🍝</div><div class="font-display font-medium text-sm">Pasta</div>
+      </div>
+      <div class="food-card border-2 border-transparent bg-purple-50 rounded-2xl py-5" data-food="Tacos">
+        <div class="text-3xl mb-1">🌮</div><div class="font-display font-medium text-sm">Tacos</div>
+      </div>
+      <div class="food-card border-2 border-transparent bg-purple-50 rounded-2xl py-5" data-food="Ramen">
+        <div class="text-3xl mb-1">🍜</div><div class="font-display font-medium text-sm">Ramen</div>
+      </div>
+    </div>
+    <button id="foodConfirmBtn" onclick="goTo(5)" class="btn-pink font-display font-medium w-full py-3 rounded-full text-lg hidden">
+      this one! →
+    </button>
+  </section>
+
+  <!-- SCREEN 5: Final -->
+  <section id="screen-5" class="screen card p-8 sm:p-10 text-center">
+    <img src="images/IMG_7795.gif   "
+         alt="me" class="w-32 h-32 object-cover rounded-full mx-auto mb-8 shadow-md" />
+   <h1 class="font-display font-bold text-xl sm:text-2xl leading-snug mb-5">
+  glad you didn't say no. be ready by <span id="selectedTime">6:00 PM</span>, I'm coming to get you 🚗
+</h1>
+    <p class="italic text-sm sm:text-base opacity-70 mb-6">
+      P.S. normal people text. I made a website for you no big deal.
+    </p>
+    <div class="flex justify-center gap-3 text-2xl">
+      <span class="pulse-heart">💖</span><span class="pulse-heart" style="animation-delay:.3s">💖</span><span class="pulse-heart" style="animation-delay:.6s">💖</span>
+    </div>
+<button onclick="sendWhatsApp()" class="btn-pink font-display font-medium px-8 py-3 rounded-full text-lg mt-8">Send me your answer 💕</button>
+  </section>
+</div>
+
+
+<script>
+let selectedDate='';
+let selectedTime='';
+let selectedFood='';
+    function saveTime() {
+  selectedDate=document.getElementById('dayInput').value;
+  const time=document.getElementById('timeInput').value;
+  if(time){
+    selectedTime=time.split('—')[0].trim();
+    document.getElementById('selectedTime').textContent=selectedTime;
+  }
+}
+  // ---- floating flowers ----
+  const flowersEl = document.getElementById('flowers');
+  const emojis = ['🌸','🌸','🌸','💮'];
+  for(let i=0;i<14;i++){
+    const f = document.createElement('div');
+    f.className = 'flower';
+    f.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+    f.style.left = Math.random()*100+'vw';
+    f.style.animationDuration = (10+Math.random()*10)+'s';
+    f.style.animationDelay = (Math.random()*10)+'s';
+    f.style.fontSize = (1+Math.random()*1.2)+'rem';
+    flowersEl.appendChild(f);
+  }
+
+  // ---- screen navigation ----
+  function goTo(n){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.getElementById('screen-'+n).classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  // ---- dodging "no" button ----
+  const noBtn = document.getElementById('noBtn');
+  const proposalSection = document.getElementById('screen-1');
+  function dodge(){
+    const rect = proposalSection.getBoundingClientRect();
+    const btnW = noBtn.offsetWidth, btnH = noBtn.offsetHeight;
+    const maxX = rect.width - btnW - 40;
+    const maxY = 120;
+    const x = Math.random()*maxX - maxX/2;
+    const y = Math.random()*maxY - maxY/2;
+    noBtn.style.transform = `translate(${x}px, ${y}px)`;
+  }
+  noBtn.addEventListener('mouseenter', dodge);
+  noBtn.addEventListener('click', (e)=>{ e.preventDefault(); dodge(); });
+  noBtn.addEventListener('touchstart', (e)=>{ e.preventDefault(); dodge(); });
+
+  // ---- confetti burst ----
+  function burstConfetti(){
+    const colors = ['#f2a3bd','#a6c8f0','#f5e08e','#d9cdf5','#b7e4c7'];
+    const container = document.getElementById('confetti');
+    for(let i=0;i<60;i++){
+      const p = document.createElement('div');
+      p.className = 'confetti-piece';
+      p.style.left = Math.random()*100+'vw';
+      p.style.background = colors[Math.floor(Math.random()*colors.length)];
+      p.style.width = p.style.height = (6+Math.random()*8)+'px';
+      p.style.borderRadius = Math.random()>0.5 ? '50%' : '2px';
+      p.style.animationDuration = (2+Math.random()*2)+'s';
+      p.style.animationDelay = (Math.random()*0.4)+'s';
+      container.appendChild(p);
+      setTimeout(()=>p.remove(), 5000);
+    }
+  }
+
+  // ---- food selection ----
+  const foodCards = document.querySelectorAll('.food-card');
+  const foodConfirmBtn = document.getElementById('foodConfirmBtn');
+  foodCards.forEach(card=>{
+    card.addEventListener('click', ()=>{
+      foodCards.forEach(c=>c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedFood=card.dataset.food;
+      foodConfirmBtn.classList.remove('hidden');
+    });
+  });
+function sendWhatsApp(){
+const message=`Hey! 💕
+I accepted your date proposal ❤️
+
+📅 Date: ${selectedDate}
+⏰ Time: ${selectedTime}
+🍕 Food: ${selectedFood}`;
+const phone='923117744461';
+window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`,'_blank');
+}
+</script>
+</body>
+</html>
